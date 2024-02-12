@@ -15,5 +15,16 @@ model User {
   name  String
   email String  @unique
   password String
+  tokens   Token[]
   @@map("user")
+}
+
+model Token {
+  id         Int       @id @default(autoincrement())
+  token      String
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  @@map("token")
 }
