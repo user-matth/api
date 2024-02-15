@@ -6,12 +6,14 @@ import { AuthRegisterDto } from '../dto/auth-register.dto';
 import * as jwt from 'jsonwebtoken';
 import { ApiResponse } from 'src/app/core/response.dto';
 import { ConfigService } from '@nestjs/config';
+import { MailerServices } from 'src/app/core/mailer/mailer.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaClient,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private mailerServices: MailerServices
   ) { }
 
   async validateUser(authLoginDto: AuthLoginDto): Promise<any> {
@@ -81,6 +83,7 @@ export class AuthService {
     });
 
     const { password: _, ...result } = newUser;
+    this.mailerServices.sendEmail(email, name);
     return new ApiResponse('success', 'User registered successfully', { user: result });
   }
 
